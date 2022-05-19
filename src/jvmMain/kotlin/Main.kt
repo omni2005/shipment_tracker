@@ -1,6 +1,4 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -8,32 +6,34 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 
 @Composable
 fun ShipmentView(shipment: Shipment, remove: () -> Unit) {
     Column {
-        Surface(elevation = 1.dp) {
             Row(modifier = Modifier.padding(16.dp)) {
                 Text("Shipment: " + shipment.id)
-                Button(remove) {
-                    Text("Close")
+
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Status: " + shipment.status)
+                }
+                Column(modifier = Modifier.padding(16.dp)) {
+                    val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy")
+                    val dateString = simpleDateFormat.format(shipment.expectedDeliveryDateTimestamp)
+                    Text("Expected Delivery Date: " + dateString)
+                }
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Button(remove) {
+                        Text("Close")
+                    }
                 }
             }
-            Row(modifier = Modifier.padding(32.dp)) {
-                Text("Status: " + shipment.status)
-            }
-            Row(modifier = Modifier.padding(60.dp)) {
-                val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy")
-                val dateString = simpleDateFormat.format(shipment.expectedDeliveryDateTimestamp)
-                Text("Expected Delivery Date: " + dateString)
-            }
+        Row(modifier = Modifier.padding(16.dp)) {
+            Text("Notes: ")
         }
     }
 }
@@ -73,16 +73,6 @@ fun App() {
         }
     }
 }
-
-/*
-fun main() = runBlocking { // this: CoroutineScope
-    launch { // launch a new coroutine and continue
-        delay(5000L) // non-blocking delay for 1 second (default time unit is ms)
-        println("World!") // print after delay
-    }
-    println("Hello") // main coroutine continues while a previous one is delayed
-}
- */
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
