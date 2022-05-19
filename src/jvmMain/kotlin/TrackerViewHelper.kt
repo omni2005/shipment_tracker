@@ -1,9 +1,12 @@
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+
 class TrackerViewHelper {
     var shipmentId: String = ""
-    var shipmentTotes = arrayListOf<String>()
-    var shipmentUpdateHistory = arrayListOf<String>()
-    var expectedShipmentDeliveryDate = arrayListOf<String>()
-    var shipmentStatus: String = ""
+    var shipmentTotes = mutableStateListOf<String>()
+    var shipmentUpdateHistory = mutableStateListOf<String>()
+    var expectedShipmentDeliveryDate = mutableStateListOf<String>()
+    var shipmentStatus = mutableStateOf(String)
 
     fun trackShipment(id: String) {
 

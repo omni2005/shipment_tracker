@@ -1,4 +1,9 @@
 package strategy
 
-class CanceledStrategy {
+import UpdateTypeStrategy
+
+class CanceledStrategy: UpdateTypeStrategy {
+    override fun getUpdate(update: List<String>) {
+
+    }
 }

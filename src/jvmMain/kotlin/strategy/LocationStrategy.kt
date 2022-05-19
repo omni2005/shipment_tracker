@@ -1,4 +1,9 @@
 package strategy
 
-class LocationStrategy {
+import UpdateTypeStrategy
+
+class LocationStrategy: UpdateTypeStrategy {
+    override fun getUpdate(update: List<String>) {
+
+    }
 }

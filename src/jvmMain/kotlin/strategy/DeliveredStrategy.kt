@@ -1,4 +1,9 @@
 package strategy
 
-class DeliveredStrategy {
+import UpdateTypeStrategy
+
+class DeliveredStrategy: UpdateTypeStrategy {
+    override fun getUpdate(update: List<String>) {
+
+    }
 }

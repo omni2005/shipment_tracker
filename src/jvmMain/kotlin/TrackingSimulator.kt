@@ -1,23 +1,29 @@
 import androidx.compose.runtime.mutableStateListOf
+import strategy.*
 import java.io.File
 import java.io.InputStream
 
 class TrackingSimulator {
-        var shipments = mutableStateListOf<Shipment>()
-                private set
+        private var shipments = mutableStateListOf<Shipment>()
+
+        private val operationStrategies = mapOf<String, UpdateTypeStrategy>(
+                Pair("created", CreatedStrategy()),
+                Pair("canceled", CanceledStrategy()),
+                Pair("delayed", DelayedStrategy()),
+                Pair("delivered", DeliveredStrategy()),
+                Pair("location", LocationStrategy()),
+                Pair("lost", LostStrategy()),
+                Pair("noteadded", NoteAddedStrategy()),
+                Pair("shipped", ShippedStrategy())
+        )
 
         fun findShipment(id: String): Shipment? {
-                var foundShipment = false
-                shipments.forEach{
+                shipments.forEach {
                         if (id == it.id) {
-                                foundShipment = true
-                                return(it)
+                                return (it)
                         }
                 }
-                if (foundShipment == false) {
-                        println("No shipment was found with that id.")
-                        return null
-                }
+                println("No shipment was found with that id.")
                 return null
         }
 
@@ -35,7 +41,7 @@ class TrackingSimulator {
 
                 lineList.forEach {
                         if (it.first() == "created") {
-                                val shipment: Shipment = Shipment(it[1], it.first())
+                                val shipment = Shipment(it[1], it.first(), it[2].toLong())
                                 addShipment(shipment)
                         }
                 }
