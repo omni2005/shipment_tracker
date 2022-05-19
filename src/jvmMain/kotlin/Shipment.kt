@@ -1,6 +1,6 @@
-class Shipment {
-    var status: String = ""
-    var id: String = ""
+class Shipment(num: String, state: String) {
+    var status: String = state
+    var id: String = num
     var notes = arrayListOf<String>()
         private set
     var updateHistory = arrayListOf<ShippingUpdate>()

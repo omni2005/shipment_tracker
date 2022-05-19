@@ -1,37 +1,63 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.material.MaterialTheme
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.*
 
 @Composable
-@Preview
+fun ShipmentView(shipment: Shipment, remove: () -> Unit) {
+    Row {
+        Surface(elevation = 1.dp) {
+            Row(modifier = Modifier.padding(16.dp)) {
+                Text(shipment.id)
+                Button(remove) {
+                    Text("Close")
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun App() {
     var simulator: TrackingSimulator = TrackingSimulator()
     simulator.runSimulation()
 
-    var id by remember { mutableStateOf("") }
 
     MaterialTheme {
+        var id by remember { mutableStateOf("") }
+        val shipments = remember { mutableStateListOf<Shipment>() }
+
         Column {
             Row {
                 Text("Please enter a shipping id to track: ")
             }
-            TextField(id, onValueChange = {id = it})
-            Button({
-            }) {
-                Text("Track")
+            Row {
+                TextField(id, onValueChange = { id = it })
+                Button({
+                    val shipment = simulator.findShipment(id)
+                    if (shipment != null) {
+                        shipments.add(shipment)
+                    }
+                }) {
+                    Text("Track")
+                }
+            }
+            Row {
+                LazyColumn {
+                    items(shipments, key = {it}) {
+                        id -> ShipmentView(id) { shipments.remove(id)}
+                    }
+                }
             }
         }
     }
