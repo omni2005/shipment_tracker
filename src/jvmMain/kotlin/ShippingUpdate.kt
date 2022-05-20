@@ -1,5 +1,5 @@
-class ShippingUpdate {
+class ShippingUpdate(stamp: Long, status: String) {
     var previousStatus: String = ""
-    var newStatus: String = ""
-    var timeStamp: String = ""
+    var newStatus: String = status
+    var timeStamp: Long = stamp
 }

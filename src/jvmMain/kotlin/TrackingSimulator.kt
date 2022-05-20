@@ -5,21 +5,21 @@ import java.awt.event.ActionListener
 import javax.swing.Timer
 
 class TrackingSimulator {
-        var shipments = mutableStateListOf<Shipment>()
-                private set
+        private var shipments = mutableStateListOf<Shipment>()
 
         private val updateStrategies = mapOf<String, UpdateTypeStrategy>(
                 Pair("created", CreatedStrategy()),
-                Pair("canceled", CanceledStrategy()),
-                Pair("delayed", DelayedStrategy()),
-                Pair("delivered", DeliveredStrategy()),
+                Pair("canceled", StatusChangeStrategy()),
+                Pair("delayed", StatusChangeStrategy()),
+                Pair("delivered", StatusChangeStrategy()),
                 Pair("location", LocationStrategy()),
-                Pair("lost", LostStrategy()),
+                Pair("lost", StatusChangeStrategy()),
                 Pair("noteadded", NoteAddedStrategy()),
-                Pair("shipped", ShippedStrategy())
+                Pair("shipped", StatusChangeStrategy())
         )
 
 
+        // Find shipment based on a given id
         fun findShipment(id: String): Shipment? {
                 shipments.forEach {
                         if (id == it.id) {
@@ -31,12 +31,14 @@ class TrackingSimulator {
         }
 
 
+        // Add shipment to simulation
         fun addShipment(shipment: Shipment) {
                 shipments.add(shipment)
         }
 
 
         fun runSimulation() {
+                // Read file and convert each line to a list of Strings
                 val inputStream: InputStream = File("test.txt").inputStream()
                 val lines = mutableListOf<String>()
 
@@ -44,23 +46,18 @@ class TrackingSimulator {
                 val lineList = arrayListOf<List<String>>()
                 lines.forEach { lineList.add(it.split(",")) }
 
-                /*
-                lineList.forEach {
-                        updateStrategies.get(it.first())?.getUpdate(it, this)
-                }
-                 */
-
-                val delay = 1000
-                var task = ActionListener() {}
-                val timer = Timer(delay, task)
-                task = ActionListener() {
-                        if (lineList.isEmpty() == true) {
+                // Update simulation with 1 line per second
+                var simulateShipments = ActionListener {}
+                var timer = Timer(1000, simulateShipments)
+                simulateShipments = ActionListener {
+                        if (lineList.isEmpty()) {
                                 timer.stop()
+                        } else {
+                                updateStrategies.get(lineList.first().first())?.getUpdate(lineList.first(), this)
+                                lineList.remove(lineList.first())
                         }
-                        println("Hello")
-                        updateStrategies.get(lineList.first().first())?.getUpdate(lineList.first(), this)
-                        lineList.remove(lineList.first())
                 }
+                timer = Timer(1000, simulateShipments)
                 timer.start()
         }
 }

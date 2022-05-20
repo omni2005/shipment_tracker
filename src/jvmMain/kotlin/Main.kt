@@ -1,10 +1,13 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,23 +27,42 @@ fun ShipmentView(shipment: Shipment, remove: () -> Unit) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy")
                     val dateString = simpleDateFormat.format(shipment.expectedDeliveryDateTimestamp)
-                    Text("Expected Delivery Date: " + dateString)
+                    if (shipment.expectedDeliveryDateTimestamp == 0.toLong()) {
+                        Text("Expected Delivery Date: N/A")
+                    } else {
+                        Text("Expected Delivery Date: " + dateString)
+                    }
+                    Row {
+                        if (shipment.currentLocation == "") {
+                            Text("Location: N/A")
+                        } else {
+                            Text("Location: " + shipment.currentLocation)
+                        }
+                    }
                 }
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Button(remove) {
-                        Text("Close")
+                    IconButton(remove) {
+                        Icon(Icons.Filled.Close, "Close")
                     }
                 }
             }
         Row(modifier = Modifier.padding(16.dp)) {
             Text("Notes: ")
+            Column {
+                var notes = shipment.notes.size
+                var i = 0
+                repeat(notes) {
+                    Text(shipment.notes[i])
+                    i++
+                }
+            }
         }
     }
 }
 
 @Composable
 fun App() {
-    var simulator: TrackingSimulator = TrackingSimulator()
+    val simulator = TrackingSimulator()
     simulator.runSimulation()
 
 
