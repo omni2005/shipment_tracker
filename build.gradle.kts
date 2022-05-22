@@ -16,6 +16,10 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
+dependencies {
+    commonTestImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+}
+
 kotlin {
     jvm {
         compilations.all {
@@ -29,7 +33,11 @@ kotlin {
                 implementation(compose.desktop.currentOs)
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting {
+            tasks.withType<Test>() {
+                useJUnitPlatform()
+            }
+        }
     }
 }
 

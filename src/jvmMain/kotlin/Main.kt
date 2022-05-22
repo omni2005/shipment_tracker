@@ -69,6 +69,7 @@ fun App() {
     MaterialTheme {
         var id by remember { mutableStateOf("") }
         val shipments = remember { mutableStateListOf<Shipment>() }
+        val viewHelpers = remember { mutableStateListOf<TrackerViewHelper>() }
 
         Column {
             Row {
@@ -80,6 +81,7 @@ fun App() {
                     val shipment = simulator.findShipment(id)
                     if (shipment != null) {
                         shipments.add(shipment)
+                        // viewHelpers.add(TrackerViewHelper())
                     }
                 }) {
                     Text("Track")
@@ -87,6 +89,11 @@ fun App() {
             }
             Row {
                 LazyColumn {
+                    /*
+                    items(viewHelpers) { viewHelper ->
+                        ShipmentView(viewHelper) { viewHelpers.remove(viewHelper) }
+                    }
+                    */
                     items(shipments, key = {it}) {
                         id -> ShipmentView(id) { shipments.remove(id)}
                     }
