@@ -16,27 +16,27 @@ import androidx.compose.ui.window.application
 import java.text.SimpleDateFormat
 
 @Composable
-fun ShipmentView(shipment: Shipment, remove: () -> Unit) {
+fun ShipmentView(viewHelper: TrackerViewHelper, remove: () -> Unit) {
+    val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy")
     Column {
             Row(modifier = Modifier.padding(16.dp)) {
-                Text("Shipment: " + shipment.id)
+                Text("Shipment: " + viewHelper.shipmentId)
 
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Status: " + shipment.status)
+                    Text("Status: " + viewHelper.shipmentStatus)
                 }
                 Column(modifier = Modifier.padding(16.dp)) {
-                    val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy")
-                    val dateString = simpleDateFormat.format(shipment.expectedDeliveryDateTimestamp)
-                    if (shipment.expectedDeliveryDateTimestamp == 0.toLong()) {
+                    val dateString = simpleDateFormat.format(viewHelper.expectedShipmentDeliveryDate)
+                    if (viewHelper.expectedShipmentDeliveryDate == 0.toLong()) {
                         Text("Expected Delivery Date: N/A")
                     } else {
                         Text("Expected Delivery Date: " + dateString)
                     }
                     Row {
-                        if (shipment.currentLocation == "") {
+                        if (viewHelper.shipmentId == "") {
                             Text("Location: N/A")
                         } else {
-                            Text("Location: " + shipment.currentLocation)
+                            Text("Location: " + viewHelper.shipmentLocation)
                         }
                     }
                 }
@@ -47,12 +47,28 @@ fun ShipmentView(shipment: Shipment, remove: () -> Unit) {
                 }
             }
         Row(modifier = Modifier.padding(16.dp)) {
+            Text("Updates: ")
+            Column {
+                val updates = viewHelper.shipmentUpdateHistory.size
+                var i = 0
+                repeat(updates) {
+                    if (viewHelper.shipmentUpdateHistory[i].previousStatus != "") {
+                        val dateString = simpleDateFormat.format(viewHelper.shipmentUpdateHistory[i].timeStamp)
+                        Text(
+                            "Shipment went from " + viewHelper.shipmentUpdateHistory[i].previousStatus +
+                                    " to " + viewHelper.shipmentUpdateHistory[i].newStatus + " on " + dateString)
+                    }
+                    i++
+                }
+            }
+        }
+        Row(modifier = Modifier.padding(16.dp)) {
             Text("Notes: ")
             Column {
-                var notes = shipment.notes.size
+                val notes = viewHelper.shipmentNotes.size
                 var i = 0
                 repeat(notes) {
-                    Text(shipment.notes[i])
+                    Text(viewHelper.shipmentNotes[i])
                     i++
                 }
             }
@@ -60,15 +76,14 @@ fun ShipmentView(shipment: Shipment, remove: () -> Unit) {
     }
 }
 
+
 @Composable
 fun App() {
     val simulator = TrackingSimulator()
     simulator.runSimulation()
 
-
     MaterialTheme {
         var id by remember { mutableStateOf("") }
-        val shipments = remember { mutableStateListOf<Shipment>() }
         val viewHelpers = remember { mutableStateListOf<TrackerViewHelper>() }
 
         Column {
@@ -80,8 +95,8 @@ fun App() {
                 Button({
                     val shipment = simulator.findShipment(id)
                     if (shipment != null) {
-                        shipments.add(shipment)
-                        // viewHelpers.add(TrackerViewHelper())
+                        val viewHelper = TrackerViewHelper(shipment)
+                        viewHelper.trackShipment(viewHelpers, shipment)
                     }
                 }) {
                     Text("Track")
@@ -89,13 +104,13 @@ fun App() {
             }
             Row {
                 LazyColumn {
-                    /*
                     items(viewHelpers) { viewHelper ->
-                        ShipmentView(viewHelper) { viewHelpers.remove(viewHelper) }
-                    }
-                    */
-                    items(shipments, key = {it}) {
-                        id -> ShipmentView(id) { shipments.remove(id)}
+                        ShipmentView(viewHelper) {
+                            val shipment = simulator.findShipment(id)
+                            if (shipment != null) {
+                                viewHelper.stopTracking(viewHelpers, shipment)
+                            }
+                        }
                     }
                 }
             }

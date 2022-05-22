@@ -32,5 +32,4 @@ class ShipmentTest {
         assertEquals(shipment.updateHistory.last().timeStamp, 555555555)
         assertEquals(shipment.status, "lost")
     }
-
 }

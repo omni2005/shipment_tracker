@@ -1,16 +1,47 @@
-class Shipment(num: String) {
+import androidx.compose.runtime.mutableStateListOf
+
+class Shipment(num: String): Observable {
     var status: String = ""
+        set(value) {
+            field = value
+            notifyObservers()
+        }
     var id: String = num
-    var notes = arrayListOf<String>()
+        set(value) {
+            field = value
+            notifyObservers()
+        }
+    var notes = mutableStateListOf<String>()
         private set
-    var updateHistory = arrayListOf<ShippingUpdate>()
+    var updateHistory = mutableStateListOf<ShippingUpdate>()
         private set
     var expectedDeliveryDateTimestamp: Long = 0
+        set(value) {
+            field = value
+            notifyObservers()
+        }
     var currentLocation: String = ""
-    val tracker = TrackerViewHelper(id)
+        set(value) {
+            field = value
+            notifyObservers()
+        }
+    private val observers = mutableListOf<Observer>()
+
+    override fun addObserver(observer: Observer) {
+        observers.add(observer)
+    }
+
+    override fun removeObserver(observer: Observer) {
+        observers.remove(observer)
+    }
+
+    override fun notifyObservers() {
+        observers.forEach { it.notify(this) }
+    }
 
     fun addNote(note: String) {
         notes.add(note)
+        notifyObservers()
     }
 
     fun addUpdate(update: ShippingUpdate) {
@@ -21,6 +52,7 @@ class Shipment(num: String) {
 
         updateHistory.add(update)
         this.status = update.newStatus
+        notifyObservers()
     }
 
 }
