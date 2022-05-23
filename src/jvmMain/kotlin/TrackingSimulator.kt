@@ -10,7 +10,7 @@ class TrackingSimulator {
         private val updateStrategies = mapOf<String, UpdateTypeStrategy>(
                 Pair("created", CreatedStrategy()),
                 Pair("canceled", StatusChangeStrategy()),
-                Pair("delayed", StatusChangeStrategy()),
+                Pair("delayed", DelayedStrategy()),
                 Pair("delivered", StatusChangeStrategy()),
                 Pair("location", LocationStrategy()),
                 Pair("lost", StatusChangeStrategy()),
@@ -47,8 +47,9 @@ class TrackingSimulator {
                 lines.forEach { lineList.add(it.split(",")) }
 
                 // Update simulation with 1 line per second
+                val delay = 1000
                 var simulateShipments = ActionListener {}
-                var timer = Timer(1000, simulateShipments)
+                var timer = Timer(delay, simulateShipments)
                 simulateShipments = ActionListener {
                         if (lineList.isEmpty()) {
                                 timer.stop()
@@ -57,7 +58,7 @@ class TrackingSimulator {
                                 lineList.remove(lineList.first())
                         }
                 }
-                timer = Timer(1000, simulateShipments)
+                timer = Timer(delay, simulateShipments)
                 timer.start()
         }
 }

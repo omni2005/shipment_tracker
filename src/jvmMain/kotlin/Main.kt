@@ -17,35 +17,27 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun ShipmentView(viewHelper: TrackerViewHelper, remove: () -> Unit) {
-    val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy")
     Column {
-            Row(modifier = Modifier.padding(16.dp)) {
-                Text("Shipment: " + viewHelper.shipmentId)
+        Row(modifier = Modifier.padding(16.dp)) {
+            Text("Shipment: " + viewHelper.shipmentId)
 
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Status: " + viewHelper.shipmentStatus)
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Status: " + viewHelper.shipmentStatus)
+            }
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row {
+                    Text("Expected Delivery Date: " + viewHelper.expectedShipmentDeliveryDate)
                 }
-                Column(modifier = Modifier.padding(16.dp)) {
-                    val dateString = simpleDateFormat.format(viewHelper.expectedShipmentDeliveryDate)
-                    if (viewHelper.expectedShipmentDeliveryDate == 0.toLong()) {
-                        Text("Expected Delivery Date: N/A")
-                    } else {
-                        Text("Expected Delivery Date: " + dateString)
-                    }
-                    Row {
-                        if (viewHelper.shipmentId == "") {
-                            Text("Location: N/A")
-                        } else {
-                            Text("Location: " + viewHelper.shipmentLocation)
-                        }
-                    }
-                }
-                Column(modifier = Modifier.padding(16.dp)) {
-                    IconButton(remove) {
-                        Icon(Icons.Filled.Close, "Close")
-                    }
+                Row {
+                    Text("Location: " + viewHelper.shipmentLocation)
                 }
             }
+            Column(modifier = Modifier.padding(16.dp)) {
+                IconButton(remove) {
+                    Icon(Icons.Filled.Close, "Close")
+                }
+            }
+        }
         Row(modifier = Modifier.padding(16.dp)) {
             Text("Updates: ")
             Column {
@@ -53,10 +45,12 @@ fun ShipmentView(viewHelper: TrackerViewHelper, remove: () -> Unit) {
                 var i = 0
                 repeat(updates) {
                     if (viewHelper.shipmentUpdateHistory[i].previousStatus != "") {
+                        val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS")
                         val dateString = simpleDateFormat.format(viewHelper.shipmentUpdateHistory[i].timeStamp)
                         Text(
                             "Shipment went from " + viewHelper.shipmentUpdateHistory[i].previousStatus +
-                                    " to " + viewHelper.shipmentUpdateHistory[i].newStatus + " on " + dateString)
+                                    " to " + viewHelper.shipmentUpdateHistory[i].newStatus + " on " + dateString
+                        )
                     }
                     i++
                 }
@@ -106,7 +100,7 @@ fun App() {
                 LazyColumn {
                     items(viewHelpers) { viewHelper ->
                         ShipmentView(viewHelper) {
-                            val shipment = simulator.findShipment(id)
+                            val shipment = simulator.findShipment(viewHelper.shipmentId)
                             if (shipment != null) {
                                 viewHelper.stopTracking(viewHelpers, shipment)
                             }

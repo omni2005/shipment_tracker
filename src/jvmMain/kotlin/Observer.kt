@@ -1,3 +1,3 @@
 interface Observer {
-    fun notify(shipment: Shipment)
+    fun notify(subject: Observable)
 }
