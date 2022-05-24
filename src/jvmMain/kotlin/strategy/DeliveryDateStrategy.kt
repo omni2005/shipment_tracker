@@ -1,4 +1,4 @@
-class DelayedStrategy: UpdateTypeStrategy {
+class DeliveryDateStrategy: UpdateTypeStrategy {
     override fun getUpdate(update: List<String>, simulator: TrackingSimulator) {
         val id = update[1]
         val newDeliveryTime = update[3]

@@ -1,16 +1,12 @@
 import androidx.compose.runtime.mutableStateListOf
 
-class Shipment(num: String): Observable {
+class Shipment(trackingNum: String): Observable {
     var status: String = ""
         set(value) {
             field = value
             notifyObservers()
         }
-    var id: String = num
-        set(value) {
-            field = value
-            notifyObservers()
-        }
+    var id: String = trackingNum
     var notes = mutableStateListOf<String>()
         private set
     var updateHistory = mutableStateListOf<ShippingUpdate>()

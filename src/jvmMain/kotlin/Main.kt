@@ -89,8 +89,7 @@ fun App() {
                 Button({
                     val shipment = simulator.findShipment(id)
                     if (shipment != null) {
-                        val viewHelper = TrackerViewHelper(shipment)
-                        viewHelper.trackShipment(viewHelpers, shipment)
+                        viewHelpers.add(TrackerViewHelper(shipment))
                     }
                 }) {
                     Text("Track")
@@ -102,7 +101,8 @@ fun App() {
                         ShipmentView(viewHelper) {
                             val shipment = simulator.findShipment(viewHelper.shipmentId)
                             if (shipment != null) {
-                                viewHelper.stopTracking(viewHelpers, shipment)
+                                viewHelpers.remove(viewHelper)
+                                shipment.removeObserver(viewHelper)
                             }
                         }
                     }

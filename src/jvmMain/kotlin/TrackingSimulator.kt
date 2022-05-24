@@ -5,17 +5,17 @@ import java.awt.event.ActionListener
 import javax.swing.Timer
 
 class TrackingSimulator {
-        private var shipments = mutableStateListOf<Shipment>()
-
-        private val updateStrategies = mapOf<String, UpdateTypeStrategy>(
+        var shipments = mutableStateListOf<Shipment>()
+                private set
+        val updateStrategies = mapOf<String, UpdateTypeStrategy>(
                 Pair("created", CreatedStrategy()),
                 Pair("canceled", StatusChangeStrategy()),
-                Pair("delayed", DelayedStrategy()),
+                Pair("delayed", DeliveryDateStrategy()),
                 Pair("delivered", StatusChangeStrategy()),
                 Pair("location", LocationStrategy()),
                 Pair("lost", StatusChangeStrategy()),
                 Pair("noteadded", NoteAddedStrategy()),
-                Pair("shipped", StatusChangeStrategy())
+                Pair("shipped", DeliveryDateStrategy())
         )
 
 

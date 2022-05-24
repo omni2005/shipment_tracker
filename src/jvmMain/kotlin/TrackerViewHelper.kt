@@ -18,6 +18,7 @@ class TrackerViewHelper(shipment: Shipment): Observer {
         this.expectedShipmentDeliveryDate = convertDate(shipment.expectedDeliveryDateTimestamp)
         this.shipmentStatus = shipment.status
         this.shipmentLocation = shipment.currentLocation
+        shipment.addObserver(this)
     }
 
     // Update with current information whenever observed object is updated
@@ -33,17 +34,10 @@ class TrackerViewHelper(shipment: Shipment): Observer {
 
     private fun convertDate(milliseconds: Long): String {
         val simpleDateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS")
-        return simpleDateFormat.format(milliseconds)
-    }
-
-    // Add a viewHelper to list of created
-    fun trackShipment(viewHelpers: MutableList<TrackerViewHelper>, shipment: Shipment) {
-        viewHelpers.add(this)
-        shipment.addObserver(this)
-    }
-
-    fun stopTracking(viewHelpers: MutableList<TrackerViewHelper>, shipment: Shipment) {
-        viewHelpers.remove(this)
-        shipment.removeObserver(this)
+        if (milliseconds == 0.toLong()) {
+            return ""
+        } else {
+            return simpleDateFormat.format(milliseconds)
+        }
     }
 }
